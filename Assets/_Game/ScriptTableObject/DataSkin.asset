@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa2624f24d73154d9432d3cf400eb30, type: 3}
+  m_Name: DataSkin
+  m_EditorClassIdentifier: 
+  skins:
+  - _materialSkin: {fileID: 2100000, guid: 4577ee2046668dc4faae41439ead563c, type: 2}
+    _name: Tank Blue
+    _price: 0
+    _bullet: {fileID: 2697848323084455046, guid: 4e3ab7d3e179848479756955647de060, type: 3}
+    poolType: 0
+    _typeSkin: 0
+    speed_Index: 10
+    defense_Index: 2
+    dameAttack_Index: 35
+    blood_Index: 200
+    fireRace_Index: 25
+    _stateSkin: 1
+  - _materialSkin: {fileID: 2100000, guid: 36797ffef13d2934b9df4b1eee1d60ad, type: 2}
+    _name: Tank Green
+    _price: 20000
+    _bullet: {fileID: 2722411823438612777, guid: f03e50c5d0d5afc4d8f1ca3a0225e71e, type: 3}
+    poolType: 1
+    _typeSkin: 1
+    speed_Index: 8
+    defense_Index: 5
+    dameAttack_Index: 36
+    blood_Index: 220
+    fireRace_Index: 20
+    _stateSkin: 2
+  - _materialSkin: {fileID: 2100000, guid: 4bd122cb58a5d8645afd8bf406f31e3f, type: 2}
+    _name: Tank Red
+    _price: 22000
+    _bullet: {fileID: 7429355621652099609, guid: a430f3eee91bc2b46aeb099eca96417c, type: 3}
+    poolType: 2
+    _typeSkin: 2
+    speed_Index: 8
+    defense_Index: 2
+    dameAttack_Index: 40
+    blood_Index: 200
+    fireRace_Index: 23
+    _stateSkin: 0
+  - _materialSkin: {fileID: 2100000, guid: 546738ce5c5f3484bb590ed3d3f696ee, type: 2}
+    _name: Tank Yellow
+    _price: 25000
+    _bullet: {fileID: 6919349049240998905, guid: b25996885a9b1204da0d2057b2639bf4, type: 3}
+    poolType: 3
+    _typeSkin: 3
+    speed_Index: 8
+    defense_Index: 10
+    dameAttack_Index: 35
+    blood_Index: 250
+    fireRace_Index: 20
+    _stateSkin: 0

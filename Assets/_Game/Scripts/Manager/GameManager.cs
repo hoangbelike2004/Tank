@@ -31,18 +31,19 @@ public class GameManager : Singleton<GameManager>
         {
             ChangSkin();
             _rotationObject.enabled = true;
-            _player.enabled = false;
         }
         else if (GameState.gohome == gameState)
         {
             Home();
             _rotationObject.enabled = false;
-            _player.enabled = true;
         }
 
-        if (gameState != GameState.game_Play)
+        if (gameState != GameState.game_Play)//khi game trong trang thai khong phai la gameplay thi player ko use joystick
         {
             UIManager.Instance.DeActiveJoyStick();
+            BotManager.Instance.StopCoroutinueBotManager();
+            BotManager.Instance.DeActiveBotWhenNotUsed();
+            GameAction.GamePlayAction?.Invoke(false);
         }
 
 
@@ -63,10 +64,12 @@ public class GameManager : Singleton<GameManager>
 
     public void GamePlay()
     {
+        BotManager.Instance.SetAmountBotWhenNextLevel();
         _player.transform.position = LevelManager.Instance.GetPosStartOfPlayer();
         _player.SetCanvasPlaying(UIManager.Instance.GetUI<Canvas_Playing>());
-        _player.SetIsPlay(true);
+        BotManager.Instance.StartCoroutinueBotManager();
         UIManager.Instance.ActiveJoyStick();
+        GameAction.GamePlayAction?.Invoke(true);
     }
 
     public void GameStop()
@@ -82,8 +85,8 @@ public class GameManager : Singleton<GameManager>
         {
             _player.gameObject.SetActive(true);
         }
-        _player.transform.position = PosChangSkin.position;
         _player.OnInit();
+        
     }
     public void ChangSkin()
     {

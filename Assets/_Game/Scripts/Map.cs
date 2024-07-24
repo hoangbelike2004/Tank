@@ -14,13 +14,15 @@ public class Map : MonoBehaviour
     }
     public Vector3 GetPosStartOfBot()
     {
-        if (indexOfStarting >= startingPositions.Count)
+        if (indexOfStarting >= startingPositions.Count - 1)
         {
             indexOfStarting = 0;
         }
         indexOfStarting++;
         return startingPositions[indexOfStarting].position;
-
-
+    }
+    public int GetAmountPos()
+    {
+        return startingPositions.Count - 1;// vi co vi tri chi danh rieng cho player
     }
 }

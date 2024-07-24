@@ -11,9 +11,17 @@ public class LevelManager : Singleton<LevelManager>
     {
         return maps[indexLevel];
     }
+    public int GetAmountPosMap()
+    {
+        return maps[indexLevel].GetAmountPos();
+    }
     public Vector3 GetPosStartOfPlayer()
     {
         return maps[indexLevel].GetPosStartOfPlayer();
+    }
+    public Vector3 GetPosStartOfBot()
+    {
+        return maps[indexLevel].GetPosStartOfBot();
     }
     public void SetLevel()
     {

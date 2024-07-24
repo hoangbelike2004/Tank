@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,22 +10,48 @@ public class Bot : Character
     [SerializeField] NavMeshAgent _agent;
     [SerializeField] Collider[] _colliders;
     [SerializeField] Player _player;
-    [SerializeField] int valueLayerPlayer;
-    public float randomIdlestart,randomIdleend, randomRunstart, randomRunend,timeAttack;
+    [SerializeField] int valueLayerPlayer, valueLayerBot;
+    [SerializeField] private LayerMask _layerWall, LayerPlayer;
+    public float randomIdlestart, randomIdleend, randomRunstart, randomRunend, timeAttack;
     public Vector3 target;
 
     private IState currentstate;
-
+    public bool isCanShoot;
+    RaycastHit hit;
     // Update is called once per frame
     void Update()
     {
-        if(currentstate != null)
+        if (!isPlay || isDie) return;
+        if (currentstate != null)
         {
             currentstate.OnExcute(this);
         }
         timeAttack += Time.deltaTime;
+
         CheckSphereCollider();
+
+
         
+
+        Quaternion newQt = Quaternion.LookRotation(target);
+        upperBody.transform.rotation = Quaternion.Slerp(upperBody.transform.rotation, newQt, 0.5f);
+        if (isCanShoot && isAttack && !Physics.Raycast(upperBody.transform.position + new Vector3(0, 0, 1.2f), upperBody.transform.forward * 10f + Vector3.up, _layerWall))
+        {
+
+            Attack(itemskin.poolType, upperBody.transform.forward);
+            isAttack = false;
+            SetTimeAttack();
+
+
+        }
+
+        //if (Physics.Raycast(upperBody.transform.position + new Vector3(0, 0, 2), upperBody.transform.forward * 10f + Vector3.up, _layerWall))
+        //{
+        //    Debug.Log(1);
+        //}
+        //Debug.Log(0);
+
+
     }
 
 
@@ -35,7 +62,7 @@ public class Bot : Character
             currentstate.OnExit(this);
         }
         currentstate = newStatr;
-        if(currentstate != null)
+        if (currentstate != null)
         {
             currentstate.OnEnter(this);
         }
@@ -43,11 +70,11 @@ public class Bot : Character
     public override void OnInit()
     {
         ChangeSkin(RandomSKin());
-        ChangState(new PartrolState());
+        ChangState(new IdleState());
         base.OnInit();
         _agent.speed = speed;
-        
-        
+
+
     }
     public override void Move(Vector3 target)
     {
@@ -56,22 +83,29 @@ public class Bot : Character
     public override void OnHit(int dame)
     {
         base.OnHit(dame);
-        
+
     }
-    
+
     public void CheckSphereCollider()
     {
-        _colliders = Physics.OverlapSphere(transform.position, 10*timeDespawnBullet);
+        _colliders = Physics.OverlapSphere(transform.position, 20);
         Array.Sort(_colliders, Compare);
-        for(int i = 0; i< _colliders.Length; i++)
+        for (int i = 0; i < _colliders.Length; i++)
         {
-            if( _colliders[i].gameObject.layer == valueLayerPlayer)
+            if (_colliders[i].gameObject.layer == valueLayerPlayer || _colliders[i].gameObject.layer == valueLayerBot)
             {
                 Vector3 dir = _colliders[i].transform.position - transform.position;
                 dir.Normalize();
-                if (Physics.Raycast(transform.position, dir, Getradius())){
+                if (Physics.Raycast(transform.position, dir, Getradius()))
+                {
+                    isCanShoot = true;
                     target = dir;
+                    break;
                 }
+            }
+            else
+            {
+                isCanShoot = false;
             }
         }
     }
@@ -93,24 +127,14 @@ public class Bot : Character
             return 0;
         }
     }
-    private void LateUpdate()
-    {
-        Vector3 newvt = _playerDirection();
-        newvt.Normalize();
-        Quaternion newQt = Quaternion.LookRotation(newvt);
-        upperBody.transform.rotation = Quaternion.Slerp(upperBody.transform.rotation, newQt, 5 * Time.deltaTime);
-        if (isAttack)
-        {
-            Attack(itemskin.poolType,upperBody.transform.forward);
-            isAttack = false;
-            SetTimeAttack();
-        }
-    }
     public override void Die()
     {
+        _agent.ResetPath();
+        currentstate = null;
         base.Die();
+        BotManager.Instance.SetBotOnMap();
     }
-    public override void Attack(PoolType type,Vector3 dir)
+    public override void Attack(PoolType type, Vector3 dir)
     {
         base.Attack(type, dir);
 
@@ -122,11 +146,6 @@ public class Bot : Character
         base.OnDeSpawn();
     }
 
-    
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.DrawSphere(transform.position, 10 * (timeDespawnBullet+1f));
-    //}
 
     public float Getradius()
     {
@@ -140,15 +159,21 @@ public class Bot : Character
     }
     public bool IsAttack()
     {
-        if(timeAttack > 2f)
+        if (timeAttack > 2f)
         {
             return true;
         }
         return false;
-        
+
     }
     public void SetTimeAttack()
     {
         timeAttack = 0;
     }
+
+    public void SetPos(Vector3 newvt)
+    {
+        _agent.Warp(newvt);
+    }
+
 }

@@ -28,7 +28,7 @@ public class RotationGameObject : MonoBehaviour
     }
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;//hiden cursor
+        //Cursor.lockState = CursorLockMode.Locked;//hiden cursor
         _camera = Camera.main;
     }
     public void Update()

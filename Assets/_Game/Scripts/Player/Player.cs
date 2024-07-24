@@ -30,7 +30,6 @@ public class Player : Character
     void Update()
     {
         if (isDie) return;
-            Debug.Log(1);
             touches = Input.touches;
             dirMove = new Vector3(joystick_Move.Horizontal, 0, joystick_Move.Vertical);
             if (joystickobject.activeSelf == true)
@@ -96,10 +95,10 @@ public class Player : Character
         else if (rb.velocity.magnitude < 0.1f)
         {
             DeAcitveSteam();
-            if (!isAttack)
-            {
+            //if (!isAttack)
+            //{
                 ChangeAnim(Constant.ANIM_IDLE);
-            }
+            //}
 
         }
     }
@@ -137,7 +136,7 @@ public class Player : Character
                     if (timeEnd > time_value_attack && isTouchStart)
                     {
                         dirAttack.Normalize();
-                        Attack(PoolType.bullet_Blue, dirAttack);
+                        Attack(itemskin.poolType, dirAttack);
                     }
                     isTouchStart = false;
                     timeEnd = 0;
@@ -175,17 +174,22 @@ public class Player : Character
     {
         ChangeSkin(_itemskin._typeSkin);
     }
-
-
-    private void OnEnable()
+    public override void SetPlaying(bool isplay)
     {
+        base.SetPlaying(isplay);
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
         GameAction.TryOnOutfitsAciton += ChangeSkin;
         GameAction.NotSelectSkinAction += NotSelect;
         GameAction.SelectSkinAction += Select;
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnEnable();
         GameAction.TryOnOutfitsAciton -= ChangeSkin;
         GameAction.NotSelectSkinAction -= NotSelect;
         GameAction.SelectSkinAction += Select;

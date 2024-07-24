@@ -7,8 +7,8 @@ public class Character : MonoBehaviour
     [SerializeField] protected GameObject upperBody;
     [SerializeField] protected Animator anim;
     [SerializeField] protected Transform shotPos;
-    [SerializeField] protected float speed, time_value_attack = 2f,timeDespawnBullet;//toc do di chuyen va thoi gian nap dan
-    [SerializeField] protected int hp,dame,defense,fireRace,hptmp;//mau,sat thuong,phong thu, toc do dan
+    [SerializeField] protected float speed, time_value_attack = 2f, timeDespawnBullet;//toc do di chuyen va thoi gian nap dan
+    [SerializeField] protected int hp, dame, defense, fireRace, hptmp;//mau,sat thuong,phong thu, toc do dan
     [SerializeField] protected float attackRange;
     [SerializeField] protected Bullet _prefab;
     [SerializeField] protected ParticleSystem _Mullzepartical;
@@ -25,7 +25,7 @@ public class Character : MonoBehaviour
     private Quaternion initialAotationAngle;
     private void Awake()
     {
-        initialAotationAngle = transform.rotation;
+        initialAotationAngle = Quaternion.Euler(0, 0, 0);
         hptmp = hp;
     }
     void Start()
@@ -36,10 +36,11 @@ public class Character : MonoBehaviour
     {
         _Mullzepartical.Stop();
         isDie = false;
+        isPlay = false;
         hp = hptmp;
         transform.rotation = initialAotationAngle;
         upperBody.transform.rotation = initialAotationAngle;
-        
+
     }
 
     public virtual void OnDeSpawn()
@@ -55,9 +56,9 @@ public class Character : MonoBehaviour
             Die();
             return;
         }
-        
+
     }
-    
+
     public virtual void Move(Vector3 dir)
     {
         rb.velocity = dir * speed;
@@ -76,15 +77,15 @@ public class Character : MonoBehaviour
         defense = itemskin.defense_Index;
         fireRace = itemskin.fireRace_Index;
 
-        
+
     }
 
-    public virtual void Attack(PoolType type,Vector3 dir)
+    public virtual void Attack(PoolType type, Vector3 dir)
     {
-        
+
         _Mullzepartical.gameObject.SetActive(true);
-        _Mullzepartical.Play();
-        Bullet bullet = SimplePool.Spawn<Bullet>(type, shotPos.position,shotPos.rotation);
+        _Mullzepartical.Play();//effect ban
+        Bullet bullet = SimplePool.Spawn<Bullet>(type, shotPos.position, upperBody.transform.rotation);
         bullet.gameObject.SetActive(true);
         bullet.SetSpeed(fireRace);
         bullet.SetDame(dame);
@@ -94,14 +95,13 @@ public class Character : MonoBehaviour
         bullet.SetParent(this);//cho vien dan biet ai la nguoi spawn ra no
         bullet.Excute();//chay ienumtor update transform
         bullet.ActiveTrail();//active trail
-        
+
     }
 
     public virtual void Die()
     {
         isDie = true;
-        isPlay = false;
-        Invoke(nameof(OnDeSpawn), 1f);
+        Invoke(nameof(OnDeSpawn), 3f);
     }
 
     public virtual void ChangeAnim(string nameanim)
@@ -112,7 +112,7 @@ public class Character : MonoBehaviour
             currentAnim = nameanim;
             anim.SetTrigger(currentAnim);
         }
-        
+
     }
 
     public void DeAcitveSteam()
@@ -145,14 +145,29 @@ public class Character : MonoBehaviour
     {
         isAttack = false;
     }
-    public void SetIsPlay(bool isPlay)
-    {
-        this.isPlay = isPlay;
-    }
+
     public TypeSkin RandomSKin()
     {
         return (TypeSkin)Random.Range(0, dataskins.skins.Count);
     }
+    public virtual void SetPlaying(bool isplay)
+    {
+        this.isPlay = isplay;
+        Debug.Log("Param: " + isplay);
+        Debug.Log(this.isPlay);
+    }
+
+
+    protected virtual void OnEnable()
+    {
+        GameAction.GamePlayAction += SetPlaying;
+    }
+
+    protected virtual void OnDisable()
+    {
+        GameAction.GamePlayAction -= SetPlaying;
+    }
+
 
 }
 

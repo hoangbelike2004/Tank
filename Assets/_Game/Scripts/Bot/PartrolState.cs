@@ -22,7 +22,7 @@ public class PartrolState : IState
         {
             if (Vector3.Distance( next_Pos, bot.transform.position) < 0.5f)
             {
-               
+               //random lay vi tri cua player
                 next_Pos = RandomTarget.Instance.R_point_Get(bot._playerDirection(),bot.Getradius());
                 bot.Move(next_Pos);
                 next_Pos.y = bot.transform.position.y;
@@ -31,8 +31,6 @@ public class PartrolState : IState
             if(bot.target != Vector3.zero && bot.IsAttack())
             {
                 bot.isAttack = true;
-                bot.ChangeAnim(Constant.ANIM_RUN);
-               
             }
 
         }
